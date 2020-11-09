@@ -6,6 +6,8 @@ version: 0.2
 phases:
   build:
     commands:
+      - apt-get update
+      - apt-get install -y git
       - git submodule update --init
       - docker build -t awslc-saw .
       - docker run -v `pwd`:`pwd` -w `pwd` awslc-saw
