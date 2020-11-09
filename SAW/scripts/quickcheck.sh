@@ -6,7 +6,7 @@
 set -e
 
 saw proof/SHA256/SHA256.saw
-saw proof/SHA512/verify-SHA512-384-quickcheck.saw
+saw proof/SHA512/verify-SHA512-384-all.saw
 saw proof/SHA512/verify-SHA512-512-quickcheck.saw
 saw proof/HMAC/verify-HMAC-SHA384-quickcheck.saw
 saw proof/AES/verify-AES-GCM.saw
