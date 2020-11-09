@@ -1,0 +1,11 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - git submodule update --init
+      - docker build -t awslc-saw .
+      - docker run -v `pwd`:`pwd` -w `pwd` awslc-saw
