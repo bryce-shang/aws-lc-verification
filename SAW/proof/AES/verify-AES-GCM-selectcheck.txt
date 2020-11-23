@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
 */
 
+let AES_quick_check = false;
 let evp_cipher_update_gcm_len = GCM_LEN_PLACEHOLDER;
 
 include "AES-GCM.saw";

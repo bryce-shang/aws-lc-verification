@@ -9,6 +9,7 @@ import (
 	utility "aws-lc-verification/proof/common"
 	"log"
 	"os"
+	"sync"
 )
 
 const aes_process_limit int = 20
