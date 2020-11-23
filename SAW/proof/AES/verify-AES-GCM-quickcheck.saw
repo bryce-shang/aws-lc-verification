@@ -3,5 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
 */
 
-include "AES-GCM.saw";
+let evp_cipher_update_gcm_len = 10;
 
+include "AES-GCM.saw";

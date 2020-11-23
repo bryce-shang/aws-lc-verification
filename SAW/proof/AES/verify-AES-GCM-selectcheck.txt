@@ -1,0 +1,8 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+*/
+
+let evp_cipher_update_gcm_len = GCM_LEN_PLACEHOLDER;
+
+include "AES-GCM.saw";
