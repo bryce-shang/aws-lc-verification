@@ -219,30 +219,54 @@ llvm_verify m "EVP_CipherInit_ex"
 
 enable_what4_hash_consing;
 
-llvm_verify m "EVP_EncryptUpdate"
-  evp_cipher_ovs
-  true
-  (EVP_CipherUpdate_spec {{ 1 : [32] }} evp_cipher_update_gcm_len evp_cipher_update_len)
-  evp_cipher_tactic;
+let verify_EVP_CipherUpdate_spec update_len = do {
+  print (str_concat "Verifying EVP_CipherUpdate_spec at update_len=" (shoud update_len));
+  llvm_verify m "EVP_EncryptUpdate"
+    evp_cipher_ovs
+    true
+    (EVP_CipherUpdate_spec {{ 1 : [32] }} evp_cipher_update_gcm_len update_len)
+    evp_cipher_tactic;
 
-llvm_verify m "EVP_DecryptUpdate"
-  evp_cipher_ovs
-  true
-  (EVP_CipherUpdate_spec {{ 0 : [32] }} evp_cipher_update_gcm_len evp_cipher_update_len)
-  evp_cipher_tactic;
+  llvm_verify m "EVP_DecryptUpdate"
+    evp_cipher_ovs
+    true
+    (EVP_CipherUpdate_spec {{ 0 : [32] }} evp_cipher_update_gcm_len update_len)
+    evp_cipher_tactic;
+};
+
+if AES_quick_check then do {
+  verify_EVP_CipherUpdate_spec evp_cipher_update_len;
+  return ();
+} else do {
+  update_lens <- for (eval_list {{ [0 .. (evp_cipher_update_len)] : [evp_cipher_update_len + 1][32] }})
+    (\x -> (return (eval_int x)) : (TopLevel Int));
+  for update_lens verify_EVP_CipherUpdate_spec;
+  return ();
+};
 
 disable_what4_hash_consing;
 
+let verify_EVP_CipherFinal_ex_spec final_gcm_len = do {
+  print (str_concat "Verifying EVP_CipherFinal_spec at final_gcm_len=" (shoud final_gcm_len));
+  llvm_verify m "EVP_EncryptFinal_ex"
+    evp_cipher_ovs
+    true
+    (EVP_EncryptFinal_ex_spec final_gcm_len)
+    evp_cipher_tactic;
 
-llvm_verify m "EVP_EncryptFinal_ex"
-  evp_cipher_ovs
-  true
-  (EVP_EncryptFinal_ex_spec evp_cipher_final_gcm_len)
-  evp_cipher_tactic;
+  llvm_verify m "EVP_DecryptFinal_ex"
+    evp_cipher_ovs
+    true
+    (EVP_DecryptFinal_ex_spec final_gcm_len)
+    evp_cipher_tactic;
+};
 
-llvm_verify m "EVP_DecryptFinal_ex"
-  evp_cipher_ovs
-  true
-  (EVP_DecryptFinal_ex_spec evp_cipher_final_gcm_len)
-  evp_cipher_tactic;
-
+if AES_quick_check then do {
+  verify_EVP_CipherFinal_ex_spec evp_cipher_final_gcm_len;
+  return ();
+} else do {
+  final_gcm_lens <- for (eval_list {{ [0 .. (evp_cipher_final_gcm_len)] : [evp_cipher_final_gcm_len + 1][32] }})
+    (\x -> (return (eval_int x)) : (TopLevel Int));
+  for final_gcm_lens verify_EVP_CipherFinal_ex_spec;
+  return ();
+};
