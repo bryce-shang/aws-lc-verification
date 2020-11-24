@@ -9,6 +9,7 @@ import (
 	utility "aws-lc-verification/proof/common"
 	"log"
 	"os"
+	"strconv"
 	"sync"
 )
 
@@ -26,12 +27,16 @@ func main() {
 	// Generate saw scripts based on above verification template and target gcm len.
 	var wg sync.WaitGroup
 	process_count := 0
-	for gcm_len := 0; gcm_len <= 32; gcm_len++ {
-		wg.Add(1)
-		saw_template := "verify-AES-GCM-selectcheck.txt"
-		placeholder_name := "GCM_LEN_PLACEHOLDER"
-		go utility.CreateAndRunSawScript(saw_template, placeholder_name, gcm_len, &wg)
-		utility.Wait(&process_count, aes_process_limit, &wg)
+	placeholder_map := make(map[string]string)
+	saw_template := "verify-AES-GCM-selectcheck.txt"
+	for gcm_len := 10; gcm_len <= 10; gcm_len++ {
+		for update_len := 1; update_len <= 320; update_len++ {
+			wg.Add(1)
+			placeholder_map["GCM_LEN_PLACEHOLDER"] = strconv.Itoa(gcm_len)
+			placeholder_map["GCM_LEN_PLACEHOLDER"] = strconv.Itoa(gcm_len)
+			go utility.CreateAndRunSawScript(saw_template, placeholder_map, &wg)
+			utility.Wait(&process_count, aes_process_limit, &wg)
+		}
 	}
 
 	wg.Wait()

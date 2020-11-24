@@ -6,7 +6,6 @@
 package common
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -14,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 )
 
 // A utility function to terminate this program when err exists.
@@ -23,21 +23,23 @@ func CheckError(e error) {
 	}
 }
 
-// A function to create a saw script, replace `placeholder_key` with value, and then execute the script.
-func CreateAndRunSawScript(path_to_template string, placeholder_key string, value int, wg *sync.WaitGroup) {
-	log.Printf("Start creating saw script for target value %s based on template %s.", value, path_to_template)
+// A function to create a saw script from saw template, replace placeholder with target value, and then execute the script.
+func CreateAndRunSawScript(path_to_template string, placeholder_map map[string]string, wg *sync.WaitGroup) {
+	log.Printf("Start creating saw script based on template %s.", path_to_template)
 	// Create a new saw script.
-	file_name := fmt.Sprint(value, ".saw")
+	file_name := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 	file, err := os.Create(file_name)
 	CheckError(err)
 	// Read file content of verification template.
 	content, err := ioutil.ReadFile(path_to_template)
 	CheckError(err)
-	verification_template := string(content)
+	verification_script := string(content)
 	// Replace some placeholders of the file content with target values.
-	text := strings.Replace(verification_template, placeholder_key, strconv.Itoa(value), 1)
+	for placeholder_key, placeholder_value := range placeholder_map {
+		verification_script = strings.Replace(verification_script, placeholder_key, placeholder_value, 1)
+	}
 	defer file.Close()
-	file.WriteString(text)
+	file.WriteString(verification_script)
 	defer os.Remove(file_name)
 	// Run saw script.
 	defer wg.Done()
