@@ -288,6 +288,7 @@ cmp_sub_thm <- prove_folding_theorem
 /*
  * Goal tactics.
  */
+
 let aesni_gcm_cipher_tactic = do {
   simplify (addsimps [aesenc_key0_0_thm, aesenc_key0_1_thm, aesenclast_thm] empty_ss);
   simplify (addsimps [aesenc_aesenclast_thm] empty_ss);

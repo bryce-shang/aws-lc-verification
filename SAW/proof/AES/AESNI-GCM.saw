@@ -31,7 +31,11 @@ let aesni_gcm_cipher_spec enc gcm_len len = do {
   let res_len = eval_size {| len - (len % (6 * AES_BLOCK_SIZE)) |};
   let res_ctr = eval_size {| ctr + res_len / AES_BLOCK_SIZE |};
 
-  crucible_points_to_untyped out_ptr (crucible_term {{ ctr32_encrypt ctx (take`{res_len} in_) }});
+  if eval_bool {{`res_len > 0}} then do {
+    crucible_points_to_untyped out_ptr (crucible_term {{ ctr32_encrypt ctx (take`{res_len} in_) }});
+  } else do {
+    return ();
+  };
 
   crucible_points_to ivec_ptr (crucible_term {{ ivec # (split (`res_ctr : [32])) }});
 
@@ -52,6 +56,10 @@ let aesni_gcm_cipher_spec enc gcm_len len = do {
 // introduce any new assumptions.
 add_x86_preserved_reg "rax";
 enable_what4_hash_consing;
+
+print (str_concat (str_concat (str_concat "Verifying AES-NI GCM encrypt/decrypt at gcm_len=" (show aesni_gcm_cipher_gcm_len)) " and len=") (show aesni_gcm_cipher_len));
+
+print (str_concat "evp_cipher_update_bulk=" (show evp_cipher_update_bulk));
 
 aesni_gcm_encrypt_ov <- llvm_verify_x86 m "../../build/x86/crypto/crypto_test" "aesni_gcm_encrypt"
   [ ("aesni_gcm_encrypt", 1200) // we need .Lbswap_mask, which lives in .text after aesni_gcm_encrypt (1081 bytes itself). 1200 bytes is an arbitrary size that I guessed would be large enough to contain the right bytes after alignment.

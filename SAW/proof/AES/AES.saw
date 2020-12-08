@@ -176,7 +176,7 @@ aes_hw_decrypt_in_place_ov <- llvm_verify_x86 m "../../build/x86/crypto/crypto_t
 aes_hw_ctr32_encrypt_blocks_ov <- llvm_verify_x86 m "../../build/x86/crypto/crypto_test" "aes_hw_ctr32_encrypt_blocks"
   []
   true
-  (aes_hw_ctr32_encrypt_blocks_spec 1)
+  (aes_hw_ctr32_encrypt_blocks_spec whole_blocks_after_bulk)
   (do {
     simplify (cryptol_ss ());
     simplify (addsimps slice_384_thms basic_ss);
