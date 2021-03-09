@@ -1,0 +1,10 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+*/
+
+let evp_cipher_update_len = 254;
+
+print (str_concat "Running AES-GCM quick check with evp_cipher_update_len=" (show evp_cipher_update_len));
+
+include "AES-GCM.saw";
