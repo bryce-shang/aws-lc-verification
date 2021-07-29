@@ -17,7 +17,7 @@ import (
 const aes_gcm_process_limit int = 10
 
 func main() {
-	log.Printf("Started AES-GCM check.")
+	log.Printf("Started AES-GCM check aloha.")
 	// When 'AES_GCM_SELECTCHECK' is undefined, quickcheck is executed.
 	env_var := os.Getenv("AES_GCM_SELECTCHECK")
 	if len(env_var) == 0 {
